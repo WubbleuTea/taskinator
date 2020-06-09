@@ -10,14 +10,14 @@ var taskFormHandler = function(event) {
     var taskNameInput = document.querySelector("input[name='task-name']").value;
     // grabs the dropdown selection
     var taskTypeInput = document.querySelector("select[name='task-type']").value;
-
+    // if null answers prompts to fill it out
     if (!taskNameInput || !taskTypeInput) {
         alert("You need to fill out the task form!");
         return false;
     }
-    
+    // resets only the form
     formEl.reset();
-
+    // created an object, makes it clear this function is collecting data
     var taskDataObj = {
         name: taskNameInput,
         type: taskTypeInput
