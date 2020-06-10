@@ -17,10 +17,12 @@ var taskFormHandler = function(event) {
     // if null answers prompts to fill it out
     if (!taskNameInput || !taskTypeInput) {
         alert("You need to fill out the task form!");
+        formEl.reset();
+    //    var.selectedIndex = 0;
         return false;
     }
     // resets only the form
-    formEl.reset();
+
     // takes the changes from edit
     var completeEditTask = function(taskName, taskType, taskId) {
         // find the matching task list item
@@ -107,7 +109,7 @@ var createTaskActions = function(taskId) {
     // create dropdown
     var statusSelectEl = document.createElement("select");
     statusSelectEl.className = "select-status";
-    statusSelectEl.setAttribute("name", "staus-change");
+    statusSelectEl.setAttribute("name", "status-change");
     statusSelectEl.setAttribute("data-task-id", taskId);
 
     var statusChoices = ["To Do","In Progress", "Completed"];
@@ -184,21 +186,42 @@ var taskStatusChangeHandler = function(event) {
     }
 
 };
-
+// creates a dragstart
 var dragTaskHandler = function(event) {
     var taskId = event.target.getAttribute("data-task-id");
     event.dataTransfer.setData("text/plain", taskId);
-
-    var getId = event.dataTransfer.getData("text/plain");
-    console.log("getId:", getId, typeof getId);
 };
-
-var dropZoneDragHandler = function() {
+// creates the drag function and tries to nestle the task in the parent of .task-list
+var dropZoneDragHandler = function(event) {
     var taskListEl = event.target.closest(".task-list");
     if (taskListEl) {
+        // prevents task from just bouncing back during drag
         event.preventDefault();
     }
+   
     
+};
+// creates the drop function for our drags
+var dropTaskHandler = function(event) {
+    var id = event.dataTransfer.getData("text/plain");
+    var draggableElement = document.querySelector("[data-task-id='" + id + "']");
+    var dropZoneEl = event.target.closest(".task-list");
+    var statusType = dropZoneEl.id;
+    // console.log(statusType);
+    // console.dir(dropZoneEl);
+
+    //set status of task based on dropZone id
+    var statusSelectEl = draggableElement.querySelector("select[name='status-change']");
+    if (statusType === "tasks-to-do") {
+        statusSelectEl.selectedIndex = 0;
+    }
+    else if (statusType === "tasks-in-progress") {
+        statusSelectEl.selectedIndex = 1;
+    }
+    else if (statusType === "tasks-completed") {
+        statusSelectEl.selectedIndex = 2;
+    }
+    dropZoneEl.appendChild(draggableElement);
 };
 
 pageContentEl.addEventListener("click", taskButtonHandler);
@@ -208,5 +231,7 @@ pageContentEl.addEventListener("change", taskStatusChangeHandler);
 pageContentEl.addEventListener("dragstart", dragTaskHandler);
 
 pageContentEl.addEventListener("dragover", dropZoneDragHandler);
+
+pageContentEl.addEventListener("drop", dropTaskHandler);
 
 formEl.addEventListener("submit", taskFormHandler);
