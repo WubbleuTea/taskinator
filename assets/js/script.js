@@ -190,6 +190,7 @@ var taskStatusChangeHandler = function(event) {
 var dragTaskHandler = function(event) {
     var taskId = event.target.getAttribute("data-task-id");
     event.dataTransfer.setData("text/plain", taskId);
+
 };
 // creates the drag function and tries to nestle the task in the parent of .task-list
 var dropZoneDragHandler = function(event) {
@@ -197,6 +198,7 @@ var dropZoneDragHandler = function(event) {
     if (taskListEl) {
         // prevents task from just bouncing back during drag
         event.preventDefault();
+        taskListEl.setAttribute("style", "background: rgba(68, 233, 255, 0.7); border-style: dashed;");
     }
    
     
@@ -207,9 +209,6 @@ var dropTaskHandler = function(event) {
     var draggableElement = document.querySelector("[data-task-id='" + id + "']");
     var dropZoneEl = event.target.closest(".task-list");
     var statusType = dropZoneEl.id;
-    // console.log(statusType);
-    // console.dir(dropZoneEl);
-
     //set status of task based on dropZone id
     var statusSelectEl = draggableElement.querySelector("select[name='status-change']");
     if (statusType === "tasks-to-do") {
@@ -222,6 +221,14 @@ var dropTaskHandler = function(event) {
         statusSelectEl.selectedIndex = 2;
     }
     dropZoneEl.appendChild(draggableElement);
+    dropZoneEl.removeAttribute("style");
+};
+
+var dragLeaveHandler = function(event) {
+    var taskListEl = event.target.closest(".task-list");
+    if (taskListEl) {
+        taskListEl.removeAttribute("style");
+    }
 };
 
 pageContentEl.addEventListener("click", taskButtonHandler);
@@ -233,5 +240,7 @@ pageContentEl.addEventListener("dragstart", dragTaskHandler);
 pageContentEl.addEventListener("dragover", dropZoneDragHandler);
 
 pageContentEl.addEventListener("drop", dropTaskHandler);
+
+pageContentEl.addEventListener("dragleave", dragLeaveHandler);
 
 formEl.addEventListener("submit", taskFormHandler);
