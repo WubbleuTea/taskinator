@@ -45,6 +45,7 @@ var taskFormHandler = function(event) {
         };
         saveTasks();
         alert("Task Updated!");
+        formEl.reset();
 
         //return everything to normal
         formEl.removeAttribute("data-task-id");
@@ -67,7 +68,6 @@ var taskFormHandler = function(event) {
                 type: taskTypeInput,
                 status: "to do"
             };
-
             createTaskEl(taskDataObj);
             console.log(taskDataObj);
             console.log(taskDataObj.status)
@@ -105,6 +105,7 @@ var createTaskEl = function(taskDataObj) {
     taskIdCounter++;
 
     saveTasks();
+    formEl.reset();
 };
 
 var createTaskActions = function(taskId) {
@@ -176,8 +177,6 @@ var editTask = function(taskId) {
 
     var taskType = taskSelected.querySelector("span.task-type").textContent;
         document.querySelector("select[name='task-type']").value = taskType;
-
-
 };
 
 var deleteTask = function(taskId) {
@@ -232,8 +231,8 @@ var taskStatusChangeHandler = function(event) {
 var dragTaskHandler = function(event) {
     var taskId = event.target.getAttribute("data-task-id");
     event.dataTransfer.setData("text/plain", taskId);
-
 };
+
 // creates the drag function and tries to nestle the task in the parent of .task-list
 var dropZoneDragHandler = function(event) {
     var taskListEl = event.target.closest(".task-list");
@@ -241,10 +240,9 @@ var dropZoneDragHandler = function(event) {
         // prevents task from just bouncing back during drag
         event.preventDefault();
         taskListEl.setAttribute("style", "background: rgba(68, 233, 255, 0.7); border-style: dashed;");
-    }
-   
-    
+    }    
 };
+
 // creates the drop function for our drags
 var dropTaskHandler = function(event) {
     var id = event.dataTransfer.getData("text/plain");
@@ -327,13 +325,7 @@ var loadTasks = function() {
         };
 
         taskIdCounter++;
-
-        console.log(listItemEl);
-
     };
-
-    
-
 };
 
 pageContentEl.addEventListener("click", taskButtonHandler);
